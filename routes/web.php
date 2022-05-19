@@ -18,5 +18,22 @@ use \Barryvdh\DomPDF\Facade\Pdf;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('pdf');
+    /*$pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf');
+    return $pdf->download('deneme.pdf');*/
+});
+Route::post('/pdf',function (\Illuminate\Http\Request $request){
+    try {
+//    return json_decode($request->datas);//json_decode($request->datas);
+        $random = Str::random();
+        Storage::put('public/pdf/'.$random.'.blade.php',$request->code);
+        $pdf = Pdf::loadView($random,collect(json_decode($request->datas))->toArray());
+        return $pdf->download($random.'.pdf');
+    }catch (Exception){
+        return back();
+    }
+});
+Route::get('test',function (){
+    return view('deneme1');
+    return \Illuminate\Support\Facades\Storage::get('public/pdf/deneme1.blade.php');
 });
